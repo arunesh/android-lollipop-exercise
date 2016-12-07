@@ -1,11 +1,13 @@
 package com.codepath.android.lollipopexercise.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.codepath.android.lollipopexercise.R;
 import com.codepath.android.lollipopexercise.adapters.ContactsAdapter;
@@ -61,6 +63,29 @@ public class ContactsActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
+        if (id == R.id.addContacts) {
+            addNewContact();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addNewContact() {
+        final Contact contact = Contact.getRandomContact(this);
+        final int size = mAdapter.getItemCount();
+        contacts.add(contact);
+        mAdapter.notifyItemInserted(size);
+        rvContacts.scrollToPosition(size);
+        Snackbar.make(rvContacts, R.string.snackbar_title, Snackbar.LENGTH_LONG)
+                .setAction(R.string.undo_snackbar_action, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        contacts.remove(contact);
+                        mAdapter.notifyItemRemoved(size);
+                        rvContacts.scrollToPosition(0);
+                    }
+                })
+                .show();
     }
 }
